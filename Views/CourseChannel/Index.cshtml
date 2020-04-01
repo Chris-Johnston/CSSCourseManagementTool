@@ -1,0 +1,75 @@
+﻿@model CourseChannelList
+@{
+    ViewData["Title"] = "Admin Course Management";
+}
+
+<h1>Admin Course Management Page</h1>
+
+<div class="alert alert-warning">
+    <h2>Warning</h2>
+    Please use this page carefully. This can potentially grant any user in the server access to private channels and/or roles that may have elevated
+    permissions.
+    <br />
+    Also, try your best to avoid spam.
+</div>
+
+<table class="table table-bordered table-striped">
+    <thead class="font-weight-bold">
+        <tr>
+            <td>Guild Id</td>
+            <td>Course Id</td>
+            <td>Channel Id</td>
+            <td>Role Id</td>
+        </tr>
+    </thead>
+    @foreach (var course in Model.Courses.OrderBy(x => x.CourseId))
+    {
+        <tr>
+            <td>@course.GuildId</td>
+            <td>@course.CourseId</td>
+            <td>@course.ChannelId</td>
+            <td>@course.RoleId</td>
+        </tr>
+    }
+</table>
+
+@using (var form = Html.BeginForm("CreateNew", "CourseChannel", FormMethod.Post))
+{
+    <fieldset>
+        <legend>Create a new Course Channel</legend>
+        <small>This is used for creating new course channels when they do not exist already.</small>
+        @Html.AntiForgeryToken()
+        <p>
+            <label for="courseName">Course Name</label>
+            <input type="text" name="courseName" id="courseName" />
+        </p>
+        <input type="submit" value="submit" />
+    </fieldset>
+}
+
+<br />
+
+@using (var form = Html.BeginForm("CreateExisting", "CourseChannel", FormMethod.Post))
+{
+    <fieldset>
+        <legend>Create a new course channel from an existing Channel and Role</legend>
+        <small>This is only used for existing channels. Do not use for brand-new course channels.</small>
+        @Html.AntiForgeryToken()
+
+        <p>
+            <label for="roleId">Role Id</label>
+            <input type="text" name="roleId" id="roleId" />
+        </p>
+
+        <p>
+            <label for="channelId">Channel Id</label>
+            <input type="text" name="channelId" id="channelId" />
+        </p>
+
+        <p>
+            <label for="courseName">Course Name</label>
+            <input type="text" name="courseName" id="courseName" />
+        </p>
+        <input type="submit" value="submit" />
+    </fieldset>
+}

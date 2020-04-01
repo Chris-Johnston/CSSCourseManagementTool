@@ -1,0 +1,29 @@
+﻿@model RoleModel
+@{
+    ViewData["Title"] = "Join/Leave Courses";
+}
+
+<h1>Join/Leave Courses</h1>
+<div>
+    You are in the following courses:
+    <ul>
+        @foreach (var course in Model.LeaveableCourses.OrderBy(x => x.CourseId))
+        {
+            <li>
+                @Html.ActionLink($"Leave {course.CourseId}", "Leave", "Role", new { id = course.CourseId })
+            </li>
+        }
+    </ul>
+</div>
+
+<div>
+    Courses available to join:
+    <ul>
+        @foreach (var course in Model.JoinableCourses.OrderBy(x => x.CourseId))
+        {
+            <li>
+                @Html.ActionLink($"Join {course.CourseId}", "Join", "Role", new { id = course.CourseId })
+            </li>
+        }
+    </ul>
+</div>

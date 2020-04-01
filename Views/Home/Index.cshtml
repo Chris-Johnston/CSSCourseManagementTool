@@ -1,0 +1,45 @@
+﻿@model LandingModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+    <div class="text-center">
+        @if (Model.CurrentUser == null)
+        {
+            <h1 class="display-4">Welcome</h1>
+            <p>
+                Welcome, this site is used to manage course channel associations.
+                <a href="~/Home/Login">Log In Here</a> to continue.
+            </p>
+        }
+        else if (!Model.CurrentUser.InGuild)
+        {
+
+            <div class="alert alert-danger">
+                <h1>Error</h1>
+                You are not a member of this Discord server.
+            </div>
+        }
+        else if (Model.CurrentUser.IsMuted)
+        {
+
+            <div class="alert alert-danger">
+                <h1>Error</h1>
+                You do not have permissions to send messages in this Discord server, so you will not be able to join any channels.
+            </div>
+        }
+        else
+        {
+            <h1 class="display-4">Welcome</h1>
+            <p>
+                <a href="~/Role/">Navigate here</a> to assign your course channels.
+            </p>
+            if (Model.CurrentUser.IsAdmin)
+            {
+    <p>
+        <!-- should use aspnet's fancy links that are tied to the controllers -->
+        <a href="~/CourseChannel">Admins can go here.</a>
+    </p>
+            }
+        }
+    </div>

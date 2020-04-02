@@ -13,17 +13,22 @@ namespace CSSCourseManagementWeb.Controllers
 {
     public abstract class DiscordControllerBase : Controller
     {
-        public const ulong GuildId = 496110081599995906;
-        public const ulong CategoryId = 496110083097231361;
-
         // this is shared for all application stuff, per-user bearer client is different
         private readonly DiscordRestClient discordRestAppClient;
         private readonly IConfiguration configuration;
+
+        // currently will only target a single guild, may want to refactor if multiple guilds are planned
+        public readonly ulong GuildId;
+        // assumption that all course channels are under the same category id
+        public readonly ulong CategoryId;
 
         public DiscordControllerBase(DiscordRestClient discordRestClient, IConfiguration configuration) : base() // DI
         {
             this.discordRestAppClient = discordRestClient;
             this.configuration = configuration;
+
+            GuildId = ulong.Parse(configuration[ConfigConstants.DiscordGuildId]);
+            GuildId = ulong.Parse(configuration[ConfigConstants.DiscordCategoryId]);
         }
 
         public StorageUtil GetStorageUtil()

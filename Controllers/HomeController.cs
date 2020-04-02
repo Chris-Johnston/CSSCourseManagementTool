@@ -24,13 +24,12 @@ namespace CSSCourseManagementWeb.Controllers
             _logger = logger;
         }
 
-        // landing page
         public async Task<IActionResult> Index()
         {
             var model = new LandingModel();
             model.CurrentUser = await GetAuthenticatedUserInfoAsync();
 
-            // should return the proper error codes based on this state
+            // should return the proper error codes if the user is not in the discord or muted
 
             return View(nameof(Index), model);
         }
@@ -38,8 +37,7 @@ namespace CSSCourseManagementWeb.Controllers
         [Authorize]
         public async Task<IActionResult> Login()
         {
-            // should only redirect if this was successful
-            return LocalRedirect("/Role"); // should rename to courses
+            return Redirect("/Courses");
         }
 
         public async Task<IActionResult> LogOut()

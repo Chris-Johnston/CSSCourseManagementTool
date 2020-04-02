@@ -38,37 +38,13 @@ namespace CSSCourseManagementWeb
             return table;
         }
 
-        public async Task<UserEntity> GetUserEntityAsync(ulong guildId, ulong userId)
-        {
-            var table = await GetUserTableAsync();
-
-            var query = new TableQuery()
-            {
-                FilterString = TableQuery.CombineFilters(
-                    TableQuery.GenerateFilterCondition(nameof(UserEntity.PartitionKey), QueryComparisons.Equal, guildId.ToString()),
-                    TableOperators.And,
-                    TableQuery.GenerateFilterCondition(nameof(UserEntity.RowKey), QueryComparisons.Equal, userId.ToString())),
-            };
-
-            var results = await SegmentedQueryHelperAsync<UserEntity>(table, query, entity =>
-            {
-                return new UserEntity()
-                {
-                    PartitionKey = entity.PartitionKey,
-                    RowKey = entity.RowKey,
-                    JoinCourseIdsJson = entity.Properties[nameof(UserEntity.JoinCourseIdsJson)].StringValue
-                };
-            });
-            return results.FirstOrDefault();
-        }
-
         public async Task<List<CourseEntity>> GetCoursesAsync(ulong guildId)
         {
             var table = await GetCourseTableAsync();
 
             var query = new TableQuery()
             {
-                FilterString = TableQuery.GenerateFilterCondition(nameof(UserEntity.PartitionKey), QueryComparisons.Equal, guildId.ToString()),
+                FilterString = TableQuery.GenerateFilterCondition(nameof(CourseEntity.PartitionKey), QueryComparisons.Equal, guildId.ToString()),
             };
 
             return await SegmentedQueryHelperAsync<CourseEntity>(table, query, entity =>
@@ -90,9 +66,9 @@ namespace CSSCourseManagementWeb
             var query = new TableQuery()
             {
                 FilterString = TableQuery.CombineFilters(
-                    TableQuery.GenerateFilterCondition(nameof(UserEntity.PartitionKey), QueryComparisons.Equal, guildId.ToString()),
+                    TableQuery.GenerateFilterCondition(nameof(CourseEntity.PartitionKey), QueryComparisons.Equal, guildId.ToString()),
                     TableOperators.And,
-                    TableQuery.GenerateFilterCondition(nameof(UserEntity.RowKey), QueryComparisons.Equal, courseId)),
+                    TableQuery.GenerateFilterCondition(nameof(CourseEntity.RowKey), QueryComparisons.Equal, courseId)),
             };
 
             var results = await SegmentedQueryHelperAsync<CourseEntity>(table, query, entity =>

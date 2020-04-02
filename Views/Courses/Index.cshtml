@@ -4,13 +4,23 @@
 }
 
 <h1>Join/Leave Courses</h1>
+
+@if (Model.CurrentUser.IsAdmin)
+{
+    <div class="alert alert-info">
+        <h2>Admin Page</h2>
+        <a href="/Admin">Discord Admins can add new course channels here.</a>
+    </div>
+}
+
+
 <div>
     You are in the following courses:
     <ul>
         @foreach (var course in Model.LeaveableCourses.OrderBy(x => x.CourseId))
         {
             <li>
-                @Html.ActionLink($"Leave {course.CourseId}", "Leave", "Role", new { id = course.CourseId })
+                @Html.ActionLink($"Leave {course.CourseId}", "Leave", "Courses", new { id = course.CourseId })
             </li>
         }
     </ul>
@@ -22,7 +32,7 @@
         @foreach (var course in Model.JoinableCourses.OrderBy(x => x.CourseId))
         {
             <li>
-                @Html.ActionLink($"Join {course.CourseId}", "Join", "Role", new { id = course.CourseId })
+                @Html.ActionLink($"Join {course.CourseId}", "Join", "Courses", new { id = course.CourseId })
             </li>
         }
     </ul>

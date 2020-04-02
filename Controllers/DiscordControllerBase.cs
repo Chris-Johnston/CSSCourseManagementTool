@@ -28,7 +28,7 @@ namespace CSSCourseManagementWeb.Controllers
             this.configuration = configuration;
 
             GuildId = ulong.Parse(configuration[ConfigConstants.DiscordGuildId]);
-            GuildId = ulong.Parse(configuration[ConfigConstants.DiscordCategoryId]);
+            CategoryId = ulong.Parse(configuration[ConfigConstants.DiscordCategoryId]);
         }
 
         public StorageUtil GetStorageUtil()

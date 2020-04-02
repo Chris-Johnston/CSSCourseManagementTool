@@ -7,7 +7,7 @@ namespace CSSCourseManagementWeb.Models
 {
     public class RoleModel
     {
-        public UserEntity CurrentUser { get; set; }
+        public DiscordUserInfo CurrentUser { get; set; }
 
         public List<CourseEntity> JoinableCourses { get; set; } = new List<CourseEntity>();
 

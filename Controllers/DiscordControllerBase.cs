@@ -133,7 +133,7 @@ namespace CSSCourseManagementWeb.Controllers
                 .Replace('&', '_')
                 .Replace('%', '_')
                 .Replace('/', '_')
-                .Substring(0, 15); // trim to 15 chars
+                .Substring(0, 30); // trim to 30 chars
         }
 
     }

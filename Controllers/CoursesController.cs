@@ -19,6 +19,12 @@ namespace CSSCourseManagementWeb.Controllers
             _logger = logger;
         }
 
+        [HttpHead(Name = "Index")]
+        public async Task<IActionResult> IndexHead()
+        {
+            return Ok();
+        }
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> Index()

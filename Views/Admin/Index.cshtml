@@ -33,7 +33,7 @@
     }
 </table>
 
-@using (var form = Html.BeginForm("CreateNew", "CourseChannel", FormMethod.Post))
+@using (var form = Html.BeginForm("CreateNew", "Admin", FormMethod.Post))
 {
     <fieldset>
         <legend>Create a new Course Channel</legend>
@@ -49,7 +49,7 @@
 
 <br />
 
-@using (var form = Html.BeginForm("CreateExisting", "CourseChannel", FormMethod.Post))
+@using (var form = Html.BeginForm("CreateExisting", "Admin", FormMethod.Post))
 {
     <fieldset>
         <legend>Create a new course channel from an existing Channel and Role</legend>

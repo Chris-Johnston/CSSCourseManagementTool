@@ -58,10 +58,12 @@ namespace CSSCourseManagementWeb.Controllers
                 return BadRequest("Either the role or channel Id did not exist in this guild, or the role had permissions that could not be granted.");
             }
 
+            courseName = NormalizeCourseChannelName(courseName);
+
             var courseEntity = new CourseEntity()
             {
                 GuildId = GuildId.ToString(),
-                CourseId = courseName.Trim().ToLower(),
+                CourseId = courseName,
                 ChannelId = channelId.ToString(),
                 RoleId = roleId.ToString(),
             };
@@ -131,6 +133,7 @@ namespace CSSCourseManagementWeb.Controllers
             };
             var guild = await client.GetGuildAsync(GuildId);
             var channelCategory = await GetChannelCategory(client);
+            courseName = NormalizeCourseChannelName(courseName);
 
             var roleName = $"member_{channelCategory.Name}_{courseName}".ToLower();
             var role = await CreateRoleAsync(guild, roleName, requestOptions);

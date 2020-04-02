@@ -114,5 +114,27 @@ namespace CSSCourseManagementWeb.Controllers
             await user.RemoveRoleAsync(role, requestOptions);
         }
 
+        public string NormalizeCourseChannelName(string courseName)
+        {
+            // todo: not this
+            return courseName.Trim().ToLower()
+                .Replace('-', '_')
+                .Replace('\\', '_')
+                .Replace('<', '_')
+                .Replace('>', '_')
+                .Replace('#', '_')
+                .Replace('!', '_')
+                .Replace('$', '_')
+                .Replace('(', '_')
+                .Replace(')', '_')
+                .Replace(' ', '_')
+                .Replace('\t', '_')
+                .Replace('\n', '_')
+                .Replace('&', '_')
+                .Replace('%', '_')
+                .Replace('/', '_')
+                .Substring(0, 15); // trim to 15 chars
+        }
+
     }
 }

@@ -70,6 +70,11 @@ namespace CSSCourseManagementWeb.Controllers
 
             var storage = GetStorageUtil();
             var course = await storage.GetCourseAsync(GuildId, id);
+            if (course == null)
+            {
+                return NotFound($"Couldn't find a course with the id: {id}");
+            }
+
             var roleId = ulong.Parse(course.RoleId);
 
             await AddRoleForUserAsync(currentUser.CurrentUser.Id, roleId);
@@ -90,6 +95,10 @@ namespace CSSCourseManagementWeb.Controllers
 
             var storage = GetStorageUtil();
             var course = await storage.GetCourseAsync(GuildId, id);
+            if (course == null)
+            {
+                return NotFound($"Couldn't find a course with the id: {id}");
+            }
             var roleId = ulong.Parse(course.RoleId);
 
             await RemoveRoleForUserAsync(currentUser.CurrentUser.Id, roleId);

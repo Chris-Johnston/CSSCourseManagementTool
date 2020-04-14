@@ -114,8 +114,9 @@ namespace CSSCourseManagementWeb.Controllers
             await user.RemoveRoleAsync(role, requestOptions);
         }
 
-        public string NormalizeCourseChannelName(string courseName)
+        public static string NormalizeCourseChannelName(string courseName)
         {
+            var fixedLen = courseName.Length > 30 ? 30 : courseName.Length;
             // todo: not this
             return courseName.Trim().ToLower()
                 .Replace('-', '_')
@@ -133,7 +134,7 @@ namespace CSSCourseManagementWeb.Controllers
                 .Replace('&', '_')
                 .Replace('%', '_')
                 .Replace('/', '_')
-                .Substring(0, 30); // trim to 30 chars
+                .Substring(0, fixedLen); // trim to 30 chars
         }
 
     }

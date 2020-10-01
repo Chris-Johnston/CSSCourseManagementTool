@@ -114,7 +114,8 @@ namespace CSSCourseManagementWeb.Controllers
                 return Unauthorized("You must be an admin to view this page.");
 
             var appClient = await GetAppClientAsync();
-            var results = await CreateCourseChannelAsync(appClient, courseName, $"Created by {currentUser.CurrentUser.Username}#{currentUser.CurrentUser.Discriminator} {currentUser.CurrentUser.Id} online for course {courseName}.");
+            var results = await CreateCourseChannelAsync(appClient, courseName, 
+                $"Created by {currentUser.CurrentUser.Username}#{currentUser.CurrentUser.Discriminator} {currentUser.CurrentUser.Id} online for course {courseName}.");
 
             return await CreateExisting(results.role.Id, results.channel.Id, courseName);
         }
@@ -143,19 +144,13 @@ namespace CSSCourseManagementWeb.Controllers
                 throw new Exception("Cannot create a duplicate role.");
             }
 
-            var channel = await CreateTextChannelAsync(guild, courseName, requestOptions);
+            var channel = await CreateTextChannelAsync(guild, courseName, requestOptions, role.Id);
             if (channel == null)
             {
                 throw new Exception("Cannot create a duplicate channel.");
             }
 
-            // deny all
-            await channel.AddPermissionOverwriteAsync(guild.EveryoneRole,
-                new Discord.OverwritePermissions(viewChannel: Discord.PermValue.Deny), options: requestOptions);
-
-            // allow the role
-            await channel.AddPermissionOverwriteAsync(role,
-                new Discord.OverwritePermissions(viewChannel: Discord.PermValue.Allow), options: requestOptions);
+            await channel.SendMessageAsync(auditLogMessage);
 
             return (role, channel);
         }
@@ -169,12 +164,11 @@ namespace CSSCourseManagementWeb.Controllers
                 return null;
             }
 
-            var role = await guild.CreateRoleAsync(roleName, permissions: GuildPermissions.None, options: options);
-            await role.ModifyAsync(x => x.Mentionable = true, options: options);
+            var role = await guild.CreateRoleAsync(roleName, permissions: GuildPermissions.None, options: options, isHoisted: false, isMentionable: true);
             return role;
         }
 
-        private async Task<RestTextChannel> CreateTextChannelAsync(RestGuild guild, string courseName, RequestOptions requestOptions)
+        private async Task<RestTextChannel> CreateTextChannelAsync(RestGuild guild, string courseName, RequestOptions requestOptions, ulong roleId)
         {
             // prevent duplicate under this category
             foreach (var channel in await guild.GetChannelsAsync())
@@ -186,11 +180,21 @@ namespace CSSCourseManagementWeb.Controllers
                 }
             }
 
-            return await guild.CreateTextChannelAsync(courseName, options =>
+            var category = await guild.GetChannelAsync(CategoryId);
+
+            var overwriteList = new List<Overwrite>();
+            overwriteList.AddRange(category.PermissionOverwrites);
+            overwriteList.Add(new Overwrite(guild.EveryoneRole.Id, PermissionTarget.Role, new Discord.OverwritePermissions(viewChannel: Discord.PermValue.Deny)));
+            overwriteList.Add(new Overwrite(roleId, PermissionTarget.Role, new Discord.OverwritePermissions(viewChannel: Discord.PermValue.Allow)));
+
+            var result = await guild.CreateTextChannelAsync(courseName, options =>
             {
                 options.CategoryId = CategoryId;
                 options.Topic = $"Course channel for {courseName}";
+                options.PermissionOverwrites = overwriteList;
+
             }, options: requestOptions);
+            return result;
         }
 
         private async Task<RestCategoryChannel> GetChannelCategory(DiscordRestClient client)

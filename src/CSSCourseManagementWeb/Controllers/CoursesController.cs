@@ -1,4 +1,5 @@
 ﻿using CSSCourseManagementWeb.Models;
+using Discord.Net;
 using Discord.Rest;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -7,16 +8,17 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace CSSCourseManagementWeb.Controllers
 {
     public class CoursesController : DiscordControllerBase
     {
-        private readonly ILogger<CoursesController> _logger;
+        private readonly ILogger<CoursesController> logger;
         public CoursesController(ILogger<CoursesController> logger, DiscordRestClient discordRestClient, IConfiguration config) : base(discordRestClient, config)
         {
-            _logger = logger;
+            this.logger = logger;
         }
 
         [HttpHead(Name = "Index")]
@@ -29,7 +31,33 @@ namespace CSSCourseManagementWeb.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var currentUser = await GetAuthenticatedUserInfoAsync();
+            DiscordUserInfo currentUser = null;
+
+            try
+            {
+                currentUser = await GetAuthenticatedUserInfoAsync();
+            }
+            catch (HttpException httpEx) when (httpEx.HttpCode == HttpStatusCode.Unauthorized)
+            {
+                logger.LogError(httpEx, "Unhandled Discord HTTP Exception");
+                return Unauthorized("Something broke, your login may be unauthorized.");
+            }
+            catch (HttpException httpEx) when (httpEx.HttpCode == HttpStatusCode.NotFound)
+            {
+                logger.LogError(httpEx, "Unhandled Discord HTTP Exception");
+                return NotFound("Something wasn't found.");
+            }
+            catch (HttpException httpEx)
+            {
+                logger.LogError(httpEx, "Unhandled Discord HTTP Exception");
+                throw;
+            }
+
+            if (currentUser == null)
+            {
+                logger.LogError("Current User is null, this indicates some issue with logging in.");
+                return Unauthorized("Unable to log in.");
+            }
             if (!currentUser.InGuild || currentUser.IsMuted)
             {
                 return Unauthorized("You are either muted or not in this guild; so you cannot join any channels.");
@@ -62,7 +90,33 @@ namespace CSSCourseManagementWeb.Controllers
         [HttpGet]
         public async Task<IActionResult> Join(string id)
         {
-            var currentUser = await GetAuthenticatedUserInfoAsync();
+            DiscordUserInfo currentUser = null;
+
+            try
+            {
+                currentUser = await GetAuthenticatedUserInfoAsync();
+            }
+            catch (HttpException httpEx) when (httpEx.HttpCode == HttpStatusCode.Unauthorized)
+            {
+                logger.LogError(httpEx, "Unhandled Discord HTTP Exception");
+                return Unauthorized("Something broke, your login may be unauthorized.");
+            }
+            catch (HttpException httpEx) when (httpEx.HttpCode == HttpStatusCode.NotFound)
+            {
+                logger.LogError(httpEx, "Unhandled Discord HTTP Exception");
+                return NotFound("Something wasn't found.");
+            }
+            catch (HttpException httpEx)
+            {
+                logger.LogError(httpEx, "Unhandled Discord HTTP Exception");
+                throw;
+            }
+
+            if (currentUser == null)
+            {
+                logger.LogError("Current User is null, this indicates some issue with logging in.");
+                return Unauthorized("Unable to log in.");
+            }
             if (!currentUser.InGuild || currentUser.IsMuted)
             {
                 return Unauthorized("You are either muted or not in this guild; so you cannot join any channels.");
@@ -86,7 +140,33 @@ namespace CSSCourseManagementWeb.Controllers
         [HttpGet]
         public async Task<IActionResult> Leave(string id)
         {
-            var currentUser = await GetAuthenticatedUserInfoAsync();
+            DiscordUserInfo currentUser = null;
+
+            try
+            {
+                currentUser = await GetAuthenticatedUserInfoAsync();
+            }
+            catch (HttpException httpEx) when (httpEx.HttpCode == HttpStatusCode.Unauthorized)
+            {
+                logger.LogError(httpEx, "Unhandled Discord HTTP Exception");
+                return Unauthorized("Something broke, your login may be unauthorized.");
+            }
+            catch (HttpException httpEx) when (httpEx.HttpCode == HttpStatusCode.NotFound)
+            {
+                logger.LogError(httpEx, "Unhandled Discord HTTP Exception");
+                return NotFound("Something wasn't found.");
+            }
+            catch (HttpException httpEx)
+            {
+                logger.LogError(httpEx, "Unhandled Discord HTTP Exception");
+                throw;
+            }
+
+            if (currentUser == null)
+            {
+                logger.LogError("Current User is null, this indicates some issue with logging in.");
+                return Unauthorized("Unable to log in.");
+            }
             if (!currentUser.InGuild || currentUser.IsMuted)
             {
                 // TODO: make these error pages look nicer
